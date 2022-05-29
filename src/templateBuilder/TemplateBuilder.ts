@@ -1,23 +1,33 @@
 import babel from "@babel/core"
 import { readdir, writeFile, mkdir  }  from 'node:fs/promises'
 import { watch } from "node:fs"
-import config from "../../config.js"
+import spread from "@babel/plugin-proposal-object-rest-spread"
+import minify from "babel-preset-minify"
+import presetReact from "@babel/preset-react"
 
 
-
-const {distPath, templatePath} = config
-
+export interface TemplateBuilderOptions {
+    distPath: string
+    templatePath: string
+}
 
 export default class TemplateBuilder {
 
-    constructor() {
+    private config: TemplateBuilderOptions
+
+    constructor(config: TemplateBuilderOptions) {
+        this.config = config
         this.init()
+
     }
 
     init = async () => {
+
+        const {distPath, templatePath} = this.config
+
         try {
             await mkdir(`${distPath}/templates` , {recursive: true})
-        } catch(e) {
+        } catch(e: any) {
             if (!e.code || e.code != "EEXIST") {
                 throw e
             }
@@ -31,15 +41,20 @@ export default class TemplateBuilder {
         });
     }
 
-    transformTemplate = async (filename) => {    
+    transformTemplate = async (filename: string) => {   
+        const {distPath, templatePath} = this.config
+        
         const resp = await babel.transformFileAsync(`${templatePath}/${filename}`, {
-            presets: ["@babel/preset-react"]
+            configFile: false, 
+            plugins: [spread],
+            presets: [[minify, { "evaluate": false, "mangle": true}], presetReact]
         })
-        writeFile(`${distPath}/templates/${filename.replace(/\.\w*$/gm, ".template")}`, resp.code)
+        writeFile(`${distPath}/templates/${filename.replace(/\.\w*$/gm, ".template")}`, resp?.code as string)
         console.log(`Updating Template: ${filename}`)
     }
     
     transformAllTemplates = async () => {
+        const {distPath, templatePath} = this.config
         try {
             const files = await readdir(templatePath);
             for (const file of files) {

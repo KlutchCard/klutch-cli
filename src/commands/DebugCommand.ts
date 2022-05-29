@@ -2,6 +2,7 @@ import {  Argv } from "yargs"
 import DebugServer from "../debugserver/DebugServer.js"
 import qrcode from "qrcode-terminal"
 import {internalIpV4Sync}  from "internal-ip"
+import TemplateBuilder from "../templateBuilder/TemplateBuilder.js"
 
 
 
@@ -12,14 +13,16 @@ import {internalIpV4Sync}  from "internal-ip"
     builder: (yargs: Argv)  => yargs
         .positional("recipeId", {describe: "RecipeId to Debug", type: 'string'})
         .option("p", {alias: "port", describe: "Server Port", type: "number", default: 3000})
+        .option("templatePath", {describe: "Template Path", default: "./templates"})
         .option("distPath", {describe: "Distribution Path", default: "./dist"}),
 
-    handler: ({recipeId, port, distPath, env}: any) => {
+    handler: ({recipeId, port, distPath, templatePath, env}: any) => {
 
+        new TemplateBuilder({distPath, templatePath})
 
-        const server = new DebugServer({port, distPath}).start()
+        new DebugServer({port, distPath}).start()
         const serverUrlOpts = env == "sandbox" ? "&env=sandbox" : null
-        qrcode.generate(`klutch://klutch?debugRecipeId=${recipeId}&debugRecipeUrl=http://${internalIpV4Sync()}:${port}${serverUrlOpts}`, {small: true})
+        qrcode.generate(`klutch://klutch/?debugRecipeId=${recipeId}&debugRecipeUrl=http://${internalIpV4Sync()}:${port}${serverUrlOpts}`, {small: true})
     } 
 }
 
