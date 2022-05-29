@@ -1,6 +1,6 @@
 import yargs from "yargs"
 import { hideBin } from 'yargs/helpers'
-import DebugCommand from "./commands/DebugCommand"
+import DebugCommand from "./commands/DebugCommand.js"
 
 
 
