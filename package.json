@@ -1,11 +1,11 @@
 {
-  "name": "klutch-cli",
-  "version": "1.0.0",
+  "name": "@klutch-card/klutch-cli",
+  "version": "1.0.2",
   "description": "Klutch Client",
   "type": "module",
   "exports": "./dist/index.js",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w"
@@ -31,10 +31,18 @@
     "typescript": "^4.7.2",
     "yargs": "^17.5.1"
   },
+  "files": [
+    "dist",
+    "dist/**/*"
+  ],
   "engines": {
     "node": ">=15"
   },
   "bin": {
     "klutch": "./dist/index.js"
-  }
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": "klutchcard"
 }
