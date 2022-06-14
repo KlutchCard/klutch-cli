@@ -12,17 +12,19 @@ import TemplateBuilder from "../templateBuilder/TemplateBuilder.js"
 
     builder: (yargs: Argv)  => yargs
         .positional("recipeId", {describe: "RecipeId to Debug", type: 'string'})
+        .option("s", {alias: "host", type: 'string'})
         .option("p", {alias: "port", describe: "Server Port", type: "number", default: 3000})
-        .option("templatePath", {describe: "Template Path", default: "./templates"})
+        .option("templatePath", {describe: "Template Path", default: "./templates"})        
         .option("distPath", {describe: "Distribution Path", default: "./dist"}),
 
-    handler: ({recipeId, port, distPath, templatePath, env}: any) => {
+    handler: ({recipeId, port, distPath, templatePath, env, host}: any) => {
 
         new TemplateBuilder({distPath, templatePath})
 
         new DebugServer({port, distPath}).start()
-        const serverUrlOpts = env == "sandbox" ? "&env=sandbox" : null
-        qrcode.generate(`klutch://klutch/?debugRecipeId=${recipeId}&debugRecipeUrl=http://${internalIpV4Sync()}:${port}${serverUrlOpts}`, {small: true})
+        const serverHost = host || internalIpV4Sync() 
+        const serverUrlOpts = env == "sandbox" ? "&env=sandbox" : ""        
+        qrcode.generate(`klutch://klutch/?debugRecipeId=${recipeId}&debugRecipeUrl=http://${serverHost}:${port}${serverUrlOpts}`, {small: true})
     } 
 }
 
