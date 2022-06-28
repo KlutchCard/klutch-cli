@@ -1,7 +1,8 @@
 import {  Argv } from "yargs"
 import inquirer from 'inquirer';
 
-import { cp, writeFile, mkdir  }  from 'node:fs/promises'
+import { writeFile, mkdir  }  from 'node:fs/promises'
+import copy from "copy"
 import * as path from "node:path"
 
 const questions = [
@@ -91,7 +92,17 @@ async function createFileStructure(answers: any) {
 
     const [, thisFile] = process.argv    
     var thisDir = path.dirname(thisFile)
-    cp(`${thisDir}/../assets`, newDir, {recursive: true})
+    const copyPromise = new Promise((res, rej) => {
+        copy(`${thisDir}/../assets/**/*`, newDir, function(err, files) {
+            if (err) {
+                rej(err)
+            } else {
+                res(files)
+            }
+        })
+    })
+    await copyPromise
+
         
 }
 
