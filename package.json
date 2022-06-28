@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/babel__core": "^7.1.19",
     "@types/express": "^4.17.13",
+    "@types/inquirer": "^8.2.1",
     "@types/ip": "^1.1.0",
     "@types/node": "^17.0.36",
     "@types/qrcode-terminal": "^0.12.0",
@@ -26,6 +27,7 @@
     "@babel/preset-react": "^7.17.12",
     "babel-preset-minify": "^0.5.2",
     "express": "^4.18.1",
+    "inquirer": "^9.0.0",
     "internal-ip": "^7.0.0",
     "qrcode-terminal": "^0.12.0",
     "typescript": "^4.7.2",
@@ -33,7 +35,9 @@
   },
   "files": [
     "dist",
-    "dist/**/*"
+    "dist/**/*",
+    "assets",
+    "assets/**/*"
   ],
   "engines": {
     "node": ">=15"
