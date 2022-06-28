@@ -1,8 +1,11 @@
 import babel from "@babel/core"
 import { readdir, writeFile, mkdir  }  from 'node:fs/promises'
 import { watch } from "node:fs"
+// @ts-ignore
 import spread from "@babel/plugin-proposal-object-rest-spread"
+// @ts-ignore
 import minify from "babel-preset-minify"
+// @ts-ignore
 import presetReact from "@babel/preset-react"
 
 
