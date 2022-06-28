@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
 
-import yargs from "yargs"
+ import yargs from "yargs"
 
 // @ts-ignore
 import { hideBin } from 'yargs/helpers'
-import DebugCommand from "./commands/DebugCommand.js"
+ import DebugCommand from "./commands/DebugCommand.js"
 import InitCommand from "./commands/InitCommand.js"
-
 
 
 
@@ -24,4 +23,4 @@ function main() {
 }
 
 
-main()
+main() 
