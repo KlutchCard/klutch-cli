@@ -37,9 +37,7 @@
   },
   "files": [
     "dist",
-    "dist/**/*",
-    "assets",
-    "assets/**/*"
+    "dist/**/*"
   ],
   "engines": {
     "node": ">=15"

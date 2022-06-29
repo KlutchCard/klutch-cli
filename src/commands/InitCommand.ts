@@ -2,10 +2,8 @@ import {  Argv } from "yargs"
 import inquirer from 'inquirer';
 
 import { writeFile, mkdir  }  from 'node:fs/promises'
-import copy from "copy"
-import * as path from "node:path"
 import { createWriteStream } from "node:fs";
-import axios, { Axios } from "axios";
+import axios from "axios";
 
 const questions = [
     {
@@ -97,11 +95,7 @@ function downloadFile(fileUrl: string, outputLocationPath: string) {
       method: 'get',
       url: fileUrl,
       responseType: 'stream',
-    }).then(response => {
-  
-      //ensure that the user can call `then()` only when the file has
-      //been downloaded entirely.
-  
+    }).then(response => {  
       return new Promise((resolve, reject) => {
         response.data.pipe(writer);
         let error: any = null;
@@ -114,8 +108,6 @@ function downloadFile(fileUrl: string, outputLocationPath: string) {
           if (!error) {
             resolve(true);
           }
-          //no need to call the reject here, as it will have been called in the
-          //'error' stream;
         });
       });
     });
@@ -135,8 +127,10 @@ async function createFileStructure(answers: any) {
         iconFile: "./images/icon.png",
         screenShotPattern: "./images/screenshots/*.png",
         templatesPattern: "./templates/*.jsx",
-        privateKeyFile: `./${projectName}.key`,
+        buildPath: "./dist",
+        publicKeyFile: `./${projectName}.pem`,
         minimumKlutchVersion: "1.0.0",
+        autoCreateHomePanel: true,
         ...answers}
 
     writeFile(`${newDir}/klutch.json`, JSON.stringify(manifest, null, 4))
@@ -151,14 +145,17 @@ async function createFileStructure(answers: any) {
     command: "init",
     describe: "Creates a blank miniapp template",
 
-    builder: (yargs: Argv)  => yargs,
+    builder: (yargs: Argv)  => yargs
+    .option("projectName", {describe: "Mini App Project Name", type: 'string'})
+    .option("name", {describe: "Mini App name", type: 'string'})
+    .option("description", {describe: "Mini App Description", type: "string"})
+    .option("longDescription", {describe: "Mini App Long Description"})        
+    .option("serverUrl", {describe: "Server URL", type: "string"}),
 
-    handler: async () => {
-        
+    handler: async (params: any) => {
         process.stdout.write("Welcome to Klutch. We will help you create a miniapp template. You can edit your configurations on the klutch.json file\n\n")
-        const answers = await inquirer.prompt(questions)
-        createFileStructure(answers)
-        
+        const answers = await inquirer.prompt(questions, params)
+        createFileStructure(answers)        
     } 
 }
 
