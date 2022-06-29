@@ -2,8 +2,8 @@ import {  Argv } from "yargs"
 import inquirer from 'inquirer';
 
 import { writeFile, mkdir  }  from 'node:fs/promises'
-import copy from "copy"
-import * as path from "node:path"
+import { createWriteStream } from "node:fs";
+import axios from "axios";
 
 const questions = [
     {
@@ -72,37 +72,72 @@ const questions = [
     },
 ]
 
+const filesToDownload = [
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/templates/Home.jsx",
+    filename: "templates/Home.jsx"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/templates/Main.jsx",
+    filename: "templates/Main.jsx"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/templates/Transaction.jsx",
+    filename: "templates/Transaction.jsx"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/images/icon.png",
+    filename: "images/icon.png"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/images/screenshots/screenshot1.png",
+    filename: "images/screenshots/screenshot1.png"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/.gitignore",
+    filename: ".gitignore"},
+]
+
+
+function downloadFile(fileUrl: string, outputLocationPath: string) {
+    const writer = createWriteStream(outputLocationPath);
+  
+    return axios({
+      method: 'get',
+      url: fileUrl,
+      responseType: 'stream',
+    }).then(response => {  
+      return new Promise((resolve, reject) => {
+        response.data.pipe(writer);
+        let error: any = null;
+        writer.on('error', err => {
+          error = err;
+          writer.close();
+          reject(err);
+        });
+        writer.on('close', () => {
+          if (!error) {
+            resolve(true);
+          }
+        });
+      });
+    });
+  }
+
 async function createFileStructure(answers: any) {
 
     const {projectName} = answers
 
     const newDir: string = await mkdir(`./${projectName}`, {recursive: true}) || `./${projectName}`
-    
+    const templatesDir = await mkdir(`${newDir}/templates`, {recursive: true}) 
+    const imagesDir = await mkdir(`${newDir}/images/screenshots`, {recursive: true}) 
+
     const manifest = {
         version: "1.0.0",
         visibility: "PUBLIC",
         iconFile: "./images/icon.png",
         screenShotPattern: "./images/screenshots/*.png",
         templatesPattern: "./templates/*.jsx",
-        privateKeyFile: `./${projectName}.key`,
+        buildPath: "./dist",
+        publicKeyFile: `./${projectName}.pem`,
         minimumKlutchVersion: "1.0.0",
+        autoCreateHomePanel: true,
         ...answers}
 
     writeFile(`${newDir}/klutch.json`, JSON.stringify(manifest, null, 4))
 
-    const [, thisFile] = process.argv    
-    var thisDir = path.dirname(thisFile)
-    const copyPromise = new Promise((res, rej) => {
-        copy(`${thisDir}/../assets/**/*`, newDir, function(err, files) {
-            if (err) {
-                rej(err)
-            } else {
-                res(files)
-            }
-        })
+    filesToDownload.forEach(e => {
+        downloadFile(e.url, `${newDir}/${e.filename}`)
     })
-    await copyPromise
-
         
 }
 
@@ -110,14 +145,17 @@ async function createFileStructure(answers: any) {
     command: "init",
     describe: "Creates a blank miniapp template",
 
-    builder: (yargs: Argv)  => yargs,
+    builder: (yargs: Argv)  => yargs
+    .option("projectName", {describe: "Mini App Project Name", type: 'string'})
+    .option("name", {describe: "Mini App name", type: 'string'})
+    .option("description", {describe: "Mini App Description", type: "string"})
+    .option("longDescription", {describe: "Mini App Long Description"})        
+    .option("serverUrl", {describe: "Server URL", type: "string"}),
 
-    handler: async () => {
-        
+    handler: async (params: any) => {
         process.stdout.write("Welcome to Klutch. We will help you create a miniapp template. You can edit your configurations on the klutch.json file\n\n")
-        const answers = await inquirer.prompt(questions)
-        createFileStructure(answers)
-        
+        const answers = await inquirer.prompt(questions, params)
+        createFileStructure(answers)        
     } 
 }
 

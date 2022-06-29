@@ -1,6 +1,6 @@
 {
   "name": "@klutch-card/klutch-cli",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Klutch Client",
   "type": "module",
   "exports": "./dist/index.js",
@@ -26,8 +26,9 @@
     "@babel/node": "^7.17.10",
     "@babel/plugin-proposal-object-rest-spread": "^7.18.0",
     "@babel/preset-react": "^7.17.12",
+    "@klutch-card/klutch-js": "1.6.11-beta1",
+    "axios": "^0.27.2",
     "babel-preset-minify": "^0.5.2",
-    "copy": "^0.3.2",
     "express": "^4.18.1",
     "inquirer": "^9.0.0",
     "internal-ip": "^7.0.0",
@@ -37,9 +38,7 @@
   },
   "files": [
     "dist",
-    "dist/**/*",
-    "assets",
-    "assets/**/*"
+    "dist/**/*"
   ],
   "engines": {
     "node": ">=15"
