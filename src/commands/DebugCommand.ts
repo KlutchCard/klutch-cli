@@ -19,7 +19,7 @@ import TemplateBuilder from "../templateBuilder/TemplateBuilder.js"
 
     handler: ({recipeId, port, distPath, templatePath, env, host}: any) => {
 
-        new TemplateBuilder({distPath, templatePath})
+        new TemplateBuilder({distPath, templatePath}).start()
 
         new DebugServer({port, distPath}).start()
         const serverHost = host || internalIpV4Sync() 
