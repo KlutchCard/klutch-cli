@@ -3,7 +3,7 @@ import Manifest from "../Manifest.js"
 import TemplateBuilder from "../templateBuilder/TemplateBuilder.js"
 import tar from "tar"
 import { readdir,copyFile, mkdir  }  from 'node:fs/promises'
-import { AuthService, GraphQLService, Recipe } from "@klutch-card/klutch-js"
+import { AuthService, GraphQLService, Recipe, RecipeFile } from "@klutch-card/klutch-js"
 import gql from "graphql-tag"
 import KlutchRc from "../klutchservice/KlutchRc.js"
 import LoginCommand from "./LoginCommand.js"
@@ -13,16 +13,24 @@ import FormData  from "form-data"
 
 
 
-const uploadFile = async (projectName: string, version: number, filename: string) => {
-    
-    const resp = await GraphQLService.query(gql`
-        query($projectName: String, $version: Int) {
+
+const uploadRecipe = async (manifest: any, files: Array<String>): Promise<RecipeFile[]> => {
+    const resp = await GraphQLService.mutation(gql`
+        mutation($manifest: JsonString, $files: [String]) {
             developer {
-                uploadRecipe(projectName: $projectName, version: $version) 
+                uploadRecipe(manifest: $manifest, files: $files) {
+                    url
+                    fileName
+                    eTag
+                }
             }
         }
-    `, {projectName, version})
-    const url = resp.developer.uploadRecipe   
+    `, {manifest: JSON.stringify(manifest), files})
+
+    return resp.developer.uploadRecipe
+}
+
+const uploadFile = async (url: string, filename: string) => {
     const stream = createReadStream(filename)
     stream.on('error', console.log)
     const {size} = statSync(filename) 
@@ -34,13 +42,6 @@ const uploadFile = async (projectName: string, version: number, filename: string
             "Content-Length": size
         },
         data: stream})
-    const confirm = await GraphQLService.query(gql`
-        query($projectName: String, $version: Int) {
-            developer {
-                uploadRecipe(projectName: $projectName, version: $version) 
-            }
-        }
-    `, {projectName, version})
 }
 
 
@@ -54,7 +55,8 @@ const PublishCommand = {
         const manifest = Manifest()
 
         const token = await KlutchRc.load()
-        if (!token || !AuthService.getAuthToken(token)) {
+
+        if (!token || !(await AuthService.getAuthToken(token))) {
             await LoginCommand.handler(null)
         }
         
@@ -66,34 +68,32 @@ const PublishCommand = {
 
         await new TemplateBuilder({distPath: buildPath, templatePath: templatesPath}).transformAllTemplates()
 
-        console.log("Preparing upload package...")
+        const fileList:Array<String> = []
 
-        mkdir(`${buildPath}/images/screenshots`, {recursive: true})
+        fileList.push("/images/icon.png")
+        const templateFiles = await readdir(`${buildPath}/templates`)
+        templateFiles.forEach(e => fileList.push(`/templates/${e}`))
 
-        await copyFile("klutch.json", `${buildPath}/klutch.json`)
-        await copyFile(iconFile, `${buildPath}/images/icon.png`)
-        const screenshotFiles = await readdir(screenshotsPath)
-        for (const file of screenshotFiles) {
-            await copyFile(`${screenshotsPath}/${file}`, `${buildPath}/images/screenshots/${file}`)
-        }
+        const screenshotFiles = await readdir(`${screenshotsPath}`)
 
+        screenshotFiles.forEach(p => fileList.push(`/images/screenshots/${p}`))
 
+        const filesToUpload = await uploadRecipe(manifest, fileList)
 
-        const files = await readdir(buildPath)
+        //icon
+        const icon = filesToUpload.find((i: RecipeFile) => i.fileName == "/images/icon.png")
+        icon && uploadFile(icon.url, manifest.iconFile)
 
-        const filename = `${manifest.buildPath}/${manifest.projectName}.tgz`
+        //templates
+        filesToUpload.filter(i => i.fileName.startsWith("/templates")).forEach(f => {
+            uploadFile(f.url, `${buildPath}/${f.fileName}`)
+        })
 
-        await tar.create({
-            gzip: true,
-            cwd: buildPath,
-            filter: (path) => !path.endsWith(".tgz"),
-            file: filename
-          }, files)
-        
-        console.log("uploading package to server...")
+        //screenshots
+        filesToUpload.filter(i => i.fileName.startsWith("/images/screenshots")).forEach(f => {
+            uploadFile(f.url, `${screenshotsPath}/${f.fileName.substring(19)}`)
+        })
 
-        await uploadFile(projectName, +version, filename)
-        console.log("done!")
     } 
 }
 
