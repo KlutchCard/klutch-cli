@@ -122,11 +122,11 @@ async function createFileStructure(answers: any) {
     const imagesDir = await mkdir(`${newDir}/images/screenshots`, {recursive: true}) 
 
     const manifest = {
-        version: "1.0.0",
+        version: 1,
         visibility: "PUBLIC",
         iconFile: "./images/icon.png",
-        screenShotPattern: "./images/screenshots/*.png",
-        templatesPattern: "./templates/*.jsx",
+        screenshotsPath: "./images/screenshots",
+        templatesPath: "./templates",
         buildPath: "./dist",
         publicKeyFile: `./${projectName}.pem`,
         minimumKlutchVersion: "1.0.0",
@@ -155,7 +155,8 @@ async function createFileStructure(answers: any) {
     handler: async (params: any) => {
         process.stdout.write("Welcome to Klutch. We will help you create a miniapp template. You can edit your configurations on the klutch.json file\n\n")
         const answers = await inquirer.prompt(questions, params)
-        createFileStructure(answers)        
+        const {projectName, name, description, longDescription, serverUrl} = params
+        createFileStructure({projectName, name, description, longDescription, serverUrl })        
     } 
 }
 

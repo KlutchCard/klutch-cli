@@ -1,7 +1,8 @@
 import  {AuthService} from "@klutch-card/klutch-js"
 import inquirer from "inquirer"
 import { Argv } from "yargs"
-import { writeFile  }  from 'node:fs/promises'
+import KlutchRc from "../klutchservice/KlutchRc.js"
+
 
 
 const questions  = [
@@ -29,7 +30,7 @@ const LoginCommand = {
         const answers = await inquirer.prompt(questions, params)
         try {
             const resp = await AuthService.signIn(answers.username, answers.password)
-            writeFile("./.klutchrc", JSON.stringify({RefreshToken: resp.RefreshToken}))
+            KlutchRc.save(resp.RefreshToken)            
 
         } catch (e: any) {
             console.log(e.message)

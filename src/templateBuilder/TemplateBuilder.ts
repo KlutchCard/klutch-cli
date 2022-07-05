@@ -26,7 +26,7 @@ export default class TemplateBuilder {
 
     init = async () => {
 
-        const {distPath, templatePath} = this.config
+        const {distPath} = this.config
 
         try {
             await mkdir(`${distPath}/templates` , {recursive: true})
@@ -35,7 +35,15 @@ export default class TemplateBuilder {
                 throw e
             }
         }        
+        
+
+    }
+
+    start = () => {
+
         this.transformAllTemplates()
+        
+        const { templatePath} = this.config
         
         watch(templatePath, (eventType, filename) => {
             if (filename) {
