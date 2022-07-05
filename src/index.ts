@@ -11,6 +11,7 @@ import { hideBin } from 'yargs/helpers'
 import InitCommand from "./commands/InitCommand.js"
 import LoginCommand from "./commands/LoginCommand.js"
 import PublishCommand from "./commands/PublishCommand.js"
+import GenerateKeyCommand from "./commands/GenerateKey.js"
 
 
 
@@ -30,6 +31,7 @@ function main() {
         .command(InitCommand)
         .command(LoginCommand)
         .command(PublishCommand)
+        .command(GenerateKeyCommand)
         .options("e", {alias: "env", description: "environment", default: "sandbox", choices: ["sandbox", "production"]})
         .demandCommand()
         .parse()
