@@ -34,5 +34,8 @@ Scan the QR code using the expo app to launch the Klutch app in sandbox mode wit
 ## Commands
 
 ```
+klutch debug                 //Starts the Debug Server
 klutch init                  //Creates a blank miniapp template.
+klutch login                 //Logs you in as a developer
+klutch publish               //Publish your miniapp to our sandbox environment
 ```
