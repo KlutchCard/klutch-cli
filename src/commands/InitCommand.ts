@@ -4,6 +4,7 @@ import inquirer from 'inquirer';
 import { writeFile, mkdir  }  from 'node:fs/promises'
 import { createWriteStream } from "node:fs";
 import axios from "axios";
+import GenerateKeyCommand from "./GenerateKey.js";
 
 const questions = [
     {
@@ -129,11 +130,18 @@ async function createFileStructure(answers: any) {
         templatesPath: "./templates",
         buildPath: "./dist",
         publicKeyFile: `./${projectName}.pem`,
-        minimumKlutchVersion: "1.0.0",
-        autoCreateHomePanel: true,
+        minimumKlutchVersion: "1.0.0",        
+        webhookConfiguration: {
+            webhookUrl: "https://<<MY WEBHOOK URL>>",
+            events: [
+                "com.alloycard.core.entities.transaction.TransactionUpdatedEvent",
+                "com.alloycard.core.entities.transaction.TransactionReversedEvent",
+                "com.alloycard.core.entities.transaction.TransactionCreatedEvent"
+            ]
+        },
         ...answers}
 
-    writeFile(`${newDir}/klutch.json`, JSON.stringify(manifest, null, 4))
+    await writeFile(`${newDir}/klutch.json`, JSON.stringify(manifest, null, 4))
 
     filesToDownload.forEach(e => {
         downloadFile(e.url, `${newDir}/${e.filename}`)
@@ -155,8 +163,12 @@ async function createFileStructure(answers: any) {
     handler: async (params: any) => {
         process.stdout.write("Welcome to Klutch. We will help you create a miniapp template. You can edit your configurations on the klutch.json file\n\n")
         const answers = await inquirer.prompt(questions, params)
-        const {projectName, name, description, longDescription, serverUrl} = params
-        createFileStructure({projectName, name, description, longDescription, serverUrl })        
+        const {projectName, name, description, longDescription, serverUrl} = answers
+        await createFileStructure({projectName, name, description, longDescription, serverUrl })                   
+        await GenerateKeyCommand.handler({
+            configFile: `${projectName}/klutch.json`, 
+            privateKeyFile: `${projectName}/private.key`,
+            publicKeyFile: `${projectName}/${projectName}.pem`})     
     } 
 }
 

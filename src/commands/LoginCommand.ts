@@ -4,7 +4,6 @@ import { Argv } from "yargs"
 import KlutchRc from "../klutchservice/KlutchRc.js"
 
 
-
 const questions  = [
     {
         type: "input",
@@ -18,6 +17,19 @@ const questions  = [
     }
 ]
 
+export const login  = async (params: any) => {
+    const answers = await inquirer.prompt(questions, params)
+    try {
+        const resp = await AuthService.signIn(answers.username, answers.password)
+        KlutchRc.save(resp.RefreshToken)            
+        return true
+
+    } catch (e: any) {
+        console.log(e.message)
+        return false
+    }
+}
+
 const LoginCommand = {
     command: "login",
     describe: "Logs you in as a developer",
@@ -27,14 +39,7 @@ const LoginCommand = {
         .option("p", {alias: "password",  type: "string"}),
 
     handler: async (params: any) => {
-        const answers = await inquirer.prompt(questions, params)
-        try {
-            const resp = await AuthService.signIn(answers.username, answers.password)
-            KlutchRc.save(resp.RefreshToken)            
-
-        } catch (e: any) {
-            console.log(e.message)
-        }
+        await login(params)
     } 
 }
 
