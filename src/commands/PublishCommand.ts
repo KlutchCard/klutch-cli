@@ -1,31 +1,33 @@
 import { Argv } from "yargs"
 import Manifest from "../Manifest.js"
 import TemplateBuilder from "../templateBuilder/TemplateBuilder.js"
-import tar from "tar"
-import { readdir,copyFile, mkdir  }  from 'node:fs/promises'
-import { AuthService, GraphQLService, Recipe, RecipeFile } from "@klutch-card/klutch-js"
+
+import { readdir }  from 'node:fs/promises'
+import { AuthService, GraphQLService,  RecipeFile } from "@klutch-card/klutch-js"
 import gql from "graphql-tag"
 import KlutchRc from "../klutchservice/KlutchRc.js"
-import LoginCommand from "./LoginCommand.js"
+import {login } from "./LoginCommand.js"
 import axios from "axios"
-import { createReadStream, statSync } from "node:fs"
-import FormData  from "form-data"
+import { createReadStream,  statSync } from "node:fs"
+import { readFile  }  from 'node:fs/promises'
 
 
 
 
-const uploadRecipe = async (manifest: any, files: Array<String>): Promise<RecipeFile[]> => {
+
+const uploadRecipe = async (manifest: any, publicKey: string, files: Array<String>): Promise<RecipeFile[]> => {
+    
     const resp = await GraphQLService.mutation(gql`
-        mutation($manifest: JsonString, $files: [String]) {
+        mutation($manifest: JsonString, $publicKey: String, $files: [String]) {
             developer {
-                uploadRecipe(manifest: $manifest, files: $files) {
+                uploadRecipe(manifest: $manifest, publicKey: $publicKey, files: $files) {
                     url
                     fileName
                     eTag
                 }
             }
         }
-    `, {manifest: JSON.stringify(manifest), files})
+    `, {manifest: JSON.stringify(manifest), publicKey, files})
 
     return resp.developer.uploadRecipe
 }
@@ -52,12 +54,13 @@ const PublishCommand = {
     builder: (yargs: Argv)  => yargs,
 
     handler: async (params: any) => {        
-        const manifest = Manifest()
+        const manifest = Manifest(params.configFile)
 
         const token = await KlutchRc.load()
 
         if (!token || !(await AuthService.getAuthToken(token))) {
-            await LoginCommand.handler(null)
+            const ret = await login(null)
+            if (!ret) return
         }
         
 
@@ -78,7 +81,9 @@ const PublishCommand = {
 
         screenshotFiles.forEach(p => fileList.push(`/images/screenshots/${p}`))
 
-        const filesToUpload = await uploadRecipe(manifest, fileList)
+        const publicKey = await readFile(manifest["publicKeyFile"], 'utf8')
+
+        const filesToUpload = await uploadRecipe(manifest, publicKey,  fileList)
 
         //icon
         const icon = filesToUpload.find((i: RecipeFile) => i.fileName == "/images/icon.png")
