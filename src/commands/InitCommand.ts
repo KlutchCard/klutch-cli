@@ -31,7 +31,7 @@ const questions = [
     }, 
     {
         type: "input",
-        message: "Description",
+        message: "Short Description",
         name: "description",
         validate: function(input: string) {
             if (!input || input.length == 0) {
