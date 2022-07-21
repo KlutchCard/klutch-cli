@@ -15,8 +15,7 @@ const GenerateKeyCommand = {
     handler: async (params: any) => {
         const manifest = Manifest(params.configFile)
 
-        var {privateKeyFile, publicKeyFile} = params
-
+        var {privateKeyFile, publicKeyFile} = params        
         generateKeyPair('rsa', {
             modulusLength: 4096,
             publicKeyEncoding: {
@@ -25,9 +24,7 @@ const GenerateKeyCommand = {
             },
             privateKeyEncoding: {
               type: 'pkcs8',
-              format: 'pem',
-              cipher: 'aes-256-cbc',
-              passphrase: 'top secret'
+              format: 'pem'              
             }
           }, (err, publicKey, privateKey) => {
             if (err) {
