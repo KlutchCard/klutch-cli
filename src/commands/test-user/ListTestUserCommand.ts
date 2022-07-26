@@ -18,7 +18,7 @@ export const listUsers = async () => {
             }
         }   
     `) 
-    return resp.developer.listTestUsers
+    return resp.developer.listTestUsers || []
 }
 
 const ListTestUserCommand = {
@@ -37,7 +37,8 @@ const ListTestUserCommand = {
             if (!ret) return
         }
                     
-        console.log(await listUsers())
+        const users = await listUsers()
+        users.map((user: any) => console.log(user))
     } 
 }
 
