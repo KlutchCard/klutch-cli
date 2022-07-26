@@ -37,7 +37,7 @@ const ListTestUserCommand = {
             if (!ret) return
         }
                     
-        return await listUsers()
+        console.log(await listUsers())
     } 
 }
 
