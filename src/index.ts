@@ -13,6 +13,7 @@ import LoginCommand from "./commands/LoginCommand.js"
 import PublishCommand from "./commands/PublishCommand.js"
 import GenerateKeyCommand from "./commands/GenerateKey.js"
 import TestUserCommand from "./commands/test-user/TestUserCommand.js"
+import WhoAmICommand from "./commands/WhoAmICommand.js"
 
 
 
@@ -34,6 +35,7 @@ function main() {
         .command(PublishCommand)
         .command(GenerateKeyCommand)   
         .command(TestUserCommand)     
+        .command(WhoAmICommand)     
         .options("c", {alias: "configFile", description: "Path to klutch.json", default: "./klutch.json"})
         .demandCommand()
         .parse()
