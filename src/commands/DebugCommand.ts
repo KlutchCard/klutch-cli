@@ -35,14 +35,15 @@ async function getRecipeIdFromName(projectName: string): Promise<string> {
     builder: (yargs: Argv)  => yargs
         .option("s", {alias: "host", type: 'string'})
         .option("e", {alias: "env", description: "environment", default: "sandbox", choices: ["sandbox", "production"]})
-        .option("p", {alias: "port", describe: "Server Port", type: "number", default: 3000}),
+        .option("p", {alias: "port", describe: "Server Port", type: "number", default: 3000})
+        .option("recipeId", {alias: "recipeId", descibe: "Recipe Id", type: "string"}),
 
     handler:async  (params: any) => {
 
-        const {port, env, host, configFile} = params
+        var {port, env, host, configFile, recipeId} = params
         const {projectName, buildPath, templatesPath} = Manifest(configFile)
 
-        const token = await KlutchRc.load()
+        const token = await KlutchRc.load(params.env)
 
         if (!token || !(await AuthService.getAuthToken(token))) {
            const ret =  await login(params)
@@ -62,7 +63,7 @@ async function getRecipeIdFromName(projectName: string): Promise<string> {
 
         await PublishCommand.handler(params)
 
-        const recipeId = await getRecipeIdFromName(projectName)
+        recipeId = recipeId || await getRecipeIdFromName(projectName)
 
         new TemplateBuilder({distPath: buildPath, templatePath: templatesPath}).start()
 

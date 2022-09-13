@@ -54,14 +54,17 @@ export default class TemplateBuilder {
 
     transformTemplate = async (filename: string) => {   
         const {distPath, templatePath} = this.config
-        
-        const resp = await babel.transformFileAsync(`${templatePath}/${filename}`, {
-            configFile: false, 
-            plugins: [spread],
-            presets: [[minify, { "evaluate": false, "mangle": true}], presetReact]
-        })
-        writeFile(`${distPath}/templates/${filename.replace(/\.\w*$/gm, ".template")}`, resp?.code as string)
-        console.log(`Updating Template: ${filename}`)
+        try {
+            const resp = await babel.transformFileAsync(`${templatePath}/${filename}`, {
+                configFile: false, 
+                plugins: [spread],
+                presets: [[minify, { "evaluate": false, "mangle": true}], presetReact]
+            })
+            writeFile(`${distPath}/templates/${filename.replace(/\.\w*$/gm, ".template")}`, resp?.code as string)
+            console.log(`Updating Template: ${filename}`)    
+        } catch (e: any) {
+            console.error(e)
+        }
     }
     
     transformAllTemplates = async () => {

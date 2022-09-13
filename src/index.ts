@@ -2,7 +2,7 @@
 
 
 import KlutchJS from "@klutch-card/klutch-js"
-import yargs from "yargs"
+import yargs, { Argv } from "yargs"
 import 'dotenv/config'
 
 // @ts-ignore
@@ -18,17 +18,29 @@ import WhoAmICommand from "./commands/WhoAmICommand.js"
 
 
 
+
 function main() {
 
-    KlutchJS.configure({        
-        userPoolClientId: "12oebireo15skgf2r377oqjmus",
-        userPoolServer: "https://cognito-idp.us-west-2.amazonaws.com/",
-        serverUrl: "https://sandbox.klutchcard.com/graphql"
-    })
+
 
     yargs(hideBin(process.argv))
         .scriptName("klutch")
         .showHelpOnFail(true)
+        .middleware(argv => {
+            if (argv.e  !== "production")  {
+                KlutchJS.configure({        
+                    userPoolClientId: "12oebireo15skgf2r377oqjmus",
+                    userPoolServer: "https://cognito-idp.us-west-2.amazonaws.com/",
+                    serverUrl: "https://sandbox.klutchcard.com/graphql"
+                })
+            } else {
+                KlutchJS.configure({        
+                    userPoolClientId: "12oebireo15skgf2r377oqjmus",
+                    userPoolServer: "https://cognito-idp.us-west-2.amazonaws.com/",
+                    serverUrl: "https://graphql.klutchcard.com/graphql"
+                })
+            }
+        })
         .command(DebugCommand)
         .command(InitCommand)
         .command(LoginCommand)
@@ -37,6 +49,7 @@ function main() {
         .command(TestUserCommand)     
         .command(WhoAmICommand)     
         .options("c", {alias: "configFile", description: "Path to klutch.json", default: "./klutch.json"})
+        .options("e", {alias: "env", description: "Environment", hidden: true})
         .demandCommand()
         .parse()
 }

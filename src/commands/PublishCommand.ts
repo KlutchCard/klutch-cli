@@ -56,14 +56,14 @@ const PublishCommand = {
     handler: async (params: any) => {        
         const manifest = Manifest(params.configFile)
 
-        const token = await KlutchRc.load()
+        
+        const token = await KlutchRc.load(params.env)
 
         if (!token || !(await AuthService.getAuthToken(token))) {
-            const ret = await login(null)
+            const ret = await login(params)
             if (!ret) return
         }
         
-
         const { projectName, version } = manifest
 
 

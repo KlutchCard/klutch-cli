@@ -21,7 +21,7 @@ export const login  = async (params: any) => {
     const answers = await inquirer.prompt(questions, params)
     try {
         const resp = await AuthService.signIn(answers.username, answers.password)
-        KlutchRc.save(resp.RefreshToken)            
+        KlutchRc.save(resp.RefreshToken, params.env)            
         return true
 
     } catch (e: any) {
