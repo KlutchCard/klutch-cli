@@ -1,6 +1,6 @@
 {
   "name": "@klutch-card/klutch-cli",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Klutch Client",
   "type": "module",
   "exports": "./dist/index.js",
