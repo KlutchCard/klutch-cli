@@ -36,11 +36,12 @@ async function getRecipeIdFromName(projectName: string): Promise<string> {
         .option("s", {alias: "host", type: 'string'})
         .option("e", {alias: "env", description: "environment", default: "sandbox", choices: ["sandbox", "production"]})
         .option("p", {alias: "port", describe: "Server Port", type: "number", default: 3000})
-        .option("recipeId", {alias: "recipeId", descibe: "Recipe Id", type: "string"}),
+        .option("recipeId", {alias: "recipeId", describe: "Recipe Id", type: "string"})
+        .option("nopublish", {describe: "Prevent publishing prior to debug", type: "boolean", default: false}),
 
     handler:async  (params: any) => {
 
-        var {port, env, host, configFile, recipeId} = params
+        var {port, env, host, configFile, recipeId, nopublish} = params
         const {projectName, buildPath, templatesPath} = Manifest(configFile)
 
         const token = await KlutchRc.load(params.env)
@@ -61,7 +62,10 @@ async function getRecipeIdFromName(projectName: string): Promise<string> {
             }
         }
 
-        await PublishCommand.handler(params)
+        if (!nopublish) {
+            await PublishCommand.handler(params)            
+        }
+        
 
         recipeId = recipeId || await getRecipeIdFromName(projectName)
 

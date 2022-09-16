@@ -82,13 +82,11 @@ const PublishCommand = {
 
         screenshotFiles.forEach(p => fileList.push(`/images/screenshots/${p}`))
         
-        console.log('keyfile :>> ', keyfile);
         
         if (!keyfile) {
             keyfile = manifest["publicKeyFile"]
         }
 
-        console.log('keyfile :>> ', keyfile);
         const publicKey = await readFile(keyfile, 'utf8')
 
         const filesToUpload = await uploadRecipe(manifest, publicKey,  fileList)
