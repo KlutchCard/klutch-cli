@@ -50,13 +50,14 @@ const uploadFile = async (url: string, filename: string) => {
 const PublishCommand = {
     command: "publish",
     describe: "Publish your miniapp to our sandbox environment",
-
-    builder: (yargs: Argv)  => yargs,
+    builder: (yargs: Argv)  => yargs
+        .option("k", {alias: "keyfile", type: "string"}),
 
     handler: async (params: any) => {        
         const manifest = Manifest(params.configFile)
 
-        
+        let {keyfile} = params
+
         const token = await KlutchRc.load(params.env)
 
         if (!token || !(await AuthService.getAuthToken(token))) {
@@ -80,8 +81,15 @@ const PublishCommand = {
         const screenshotFiles = await readdir(`${screenshotsPath}`)
 
         screenshotFiles.forEach(p => fileList.push(`/images/screenshots/${p}`))
+        
+        console.log('keyfile :>> ', keyfile);
+        
+        if (!keyfile) {
+            keyfile = manifest["publicKeyFile"]
+        }
 
-        const publicKey = await readFile(manifest["publicKeyFile"], 'utf8')
+        console.log('keyfile :>> ', keyfile);
+        const publicKey = await readFile(keyfile, 'utf8')
 
         const filesToUpload = await uploadRecipe(manifest, publicKey,  fileList)
 
