@@ -10,6 +10,8 @@ import presetReact from "@babel/preset-react"
 // @ts-ignore
 import asyncToPromises from "babel-plugin-transform-async-to-promises"
 
+import webpack from 'webpack';
+import path from "path"
 
 export interface TemplateBuilderOptions {
     distPath: string
@@ -57,19 +59,45 @@ export default class TemplateBuilder {
 
     transformTemplate = async (filename: string) => {   
         const {distPath, templatePath, debugMode} = this.config
+        
         try {
+
+            webpack({
+                name: "test-config",
+                mode: "development",
+                entry: "./templates/Main.jsx",    
+                output: {
+                    path: path.resolve(distPath),
+                    filename: "[name].js"
+                },
+                module: {
+                  rules: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            configFile: false,
+                            presets: [presetReact],
+                            plugins: [spread, asyncToPromises]
+                        }
+                    }
+                  ]    
+                }
+            }, (err, stats)=> {
+                console.log("ERR", err)
+                //console.log("STATS", stats)
+            })
 
             const presets = debugMode ? 
                 [presetReact] : 
                 [[minify, { "evaluate": false, "mangle": true}], presetReact]
 
-            const resp = await babel.transformFileAsync(`${templatePath}/${filename}`, {
+/*             const resp = await babel.transformFileAsync(`${templatePath}/${filename}`, {
                 configFile: false, 
                 plugins: [spread, asyncToPromises],
                 presets: presets
             })
             writeFile(`${distPath}/templates/${filename.replace(/\.\w*$/gm, ".template")}`, resp?.code as string)
-            console.log(`Updating Template: ${filename}`)    
+ */            console.log(`Updating Template: ${filename}`)    
         } catch (e: any) {
             console.error(e)
         }
