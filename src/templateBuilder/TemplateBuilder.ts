@@ -7,11 +7,14 @@ import spread from "@babel/plugin-proposal-object-rest-spread"
 import minify from "babel-preset-minify"
 // @ts-ignore
 import presetReact from "@babel/preset-react"
+// @ts-ignore
+import asyncToPromises from "babel-plugin-transform-async-to-promises"
 
 
 export interface TemplateBuilderOptions {
     distPath: string
-    templatePath: string
+    templatePath: string,
+    debugMode?: boolean
 }
 
 export default class TemplateBuilder {
@@ -53,12 +56,17 @@ export default class TemplateBuilder {
     }
 
     transformTemplate = async (filename: string) => {   
-        const {distPath, templatePath} = this.config
+        const {distPath, templatePath, debugMode} = this.config
         try {
+
+            const presets = debugMode ? 
+                [presetReact] : 
+                [[minify, { "evaluate": false, "mangle": true}], presetReact]
+
             const resp = await babel.transformFileAsync(`${templatePath}/${filename}`, {
                 configFile: false, 
-                plugins: [spread],
-                presets: [[minify, { "evaluate": false, "mangle": true}], presetReact]
+                plugins: [spread, asyncToPromises],
+                presets: presets
             })
             writeFile(`${distPath}/templates/${filename.replace(/\.\w*$/gm, ".template")}`, resp?.code as string)
             console.log(`Updating Template: ${filename}`)    

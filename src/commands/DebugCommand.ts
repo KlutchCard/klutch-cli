@@ -64,17 +64,16 @@ async function getRecipeIdFromName(projectName: string): Promise<string> {
 
         if (!nopublish) {
             await PublishCommand.handler(params)            
-        }
-        
+        }        
 
         recipeId = recipeId || await getRecipeIdFromName(projectName)
 
-        new TemplateBuilder({distPath: buildPath, templatePath: templatesPath}).start()
+        new TemplateBuilder({distPath: buildPath, templatePath: templatesPath, debugMode: true}).start()
 
         new DebugServer({port, distPath: buildPath}).start()
         const serverHost = host || internalIpV4Sync() 
         const serverUrlOpts = env == "sandbox" ? "&env=sandbox" : ""        
-        qrcode.generate(`klutch://klutch/miniapps/${recipeId}?debugRecipeId=${recipeId}&debugRecipeUrl=http://${serverHost}:${port}${serverUrlOpts}`, {small: true})
+        qrcode.generate(`klutch://klutch/miniapps/${recipeId}?debugRecipeId=${recipeId}&debugRecipeUrl=ws://${serverHost}:${port}${serverUrlOpts}`, {small: true})
     } 
 }
 

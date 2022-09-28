@@ -14,6 +14,7 @@ import PublishCommand from "./commands/PublishCommand.js"
 import GenerateKeyCommand from "./commands/GenerateKey.js"
 import TestUserCommand from "./commands/test-user/TestUserCommand.js"
 import WhoAmICommand from "./commands/WhoAmICommand.js"
+import BuildTemplatesCommand from "./commands/BuildTemplatesCommand.js"
 
 
 
@@ -48,6 +49,7 @@ function main() {
         .command(GenerateKeyCommand)   
         .command(TestUserCommand)     
         .command(WhoAmICommand)     
+        .command(BuildTemplatesCommand)
         .options("c", {alias: "configFile", description: "Path to klutch.json", default: "./klutch.json"})
         .options("e", {alias: "env", description: "Environment", hidden: true})
         .demandCommand()
