@@ -19,7 +19,8 @@ import { readFile  }  from 'node:fs/promises'
 const BuildTemplateCommand = {
     command: "build-templates",
     describe: "Build your templates",
-    builder: (yargs: Argv)  => yargs,        
+    builder: (yargs: Argv)  => yargs
+    .option("d", {alias: "debugMode", type: "boolean", default: false}),        
     handler: async (params: any) => {        
         const manifest = Manifest(params.configFile)
 
@@ -37,7 +38,7 @@ const BuildTemplateCommand = {
 
         const {buildPath, templatesPath, screenshotsPath, iconFile} = manifest
 
-        await new TemplateBuilder({distPath: buildPath, templatePath: templatesPath}).transformAllTemplates()
+        await new TemplateBuilder({distPath: buildPath, templatePath: templatesPath, debugMode: params.debugMode}).transformAllTemplates()
 
 
     } 
