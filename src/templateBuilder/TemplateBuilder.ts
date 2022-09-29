@@ -1,6 +1,6 @@
 import babel from "@babel/core"
 import { readdir, writeFile, mkdir  }  from 'node:fs/promises'
-import { watch } from "node:fs"
+import { readFileSync, watch } from "node:fs"
 // @ts-ignore
 import spread from "@babel/plugin-proposal-object-rest-spread"
 // @ts-ignore
@@ -9,7 +9,8 @@ import minify from "babel-preset-minify"
 import presetReact from "@babel/preset-react"
 // @ts-ignore
 import asyncToPromises from "babel-plugin-transform-async-to-promises"
-
+import { readFile  }  from 'node:fs/promises'
+import Path from "path"
 
 export interface TemplateBuilderOptions {
     distPath: string
@@ -55,15 +56,22 @@ export default class TemplateBuilder {
         });
     }
 
-    transformTemplate = async (filename: string) => {   
+    transformTemplate = async (filename: string) => {           
         const {distPath, templatePath, debugMode} = this.config
+
+        const fileLoc = `${templatePath}/${filename}`
         try {
+            let contents = await readFile(fileLoc, 'utf8')
+            contents = contents.replace(/\/\/\s*@INJECT\("(.*)"\)/gm, (match, rep) => {                
+                const repContents = readFileSync(Path.resolve(`${templatePath}/${rep}`), 'utf8')
+                return repContents
+            })
 
             const presets = debugMode ? 
                 [presetReact] : 
                 [[minify, { "evaluate": false, "mangle": true}], presetReact]
-
-            const resp = await babel.transformFileAsync(`${templatePath}/${filename}`, {
+            
+            const resp = await babel.transformAsync(contents, {
                 configFile: false, 
                 plugins: [spread, asyncToPromises],
                 presets: presets
@@ -88,8 +96,6 @@ export default class TemplateBuilder {
         }
     }
 }
-
-
 
 
 
