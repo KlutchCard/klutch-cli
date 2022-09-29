@@ -12,6 +12,7 @@ import asyncToPromises from "babel-plugin-transform-async-to-promises"
 
 import webpack from 'webpack';
 import path from "path"
+import {resolve} from 'import-meta-resolve'
 
 export interface TemplateBuilderOptions {
     distPath: string
@@ -68,12 +69,12 @@ export default class TemplateBuilder {
                 entry: "./templates/Main.jsx",    
                 output: {
                     path: path.resolve(distPath),
-                    filename: "[name].js"
+                    filename: "[name].jsx"
                 },
                 module: {
                   rules: [
                     {
-                        loader: 'babel-loader',
+                        loader: await resolve("babel-loader", import.meta.url),
                         options: {
                             configFile: false,
                             presets: [presetReact],
@@ -81,9 +82,13 @@ export default class TemplateBuilder {
                         }
                     }
                   ]    
+                },
+                resolve: {
+                    extensions: [".js", ".jsx"]
                 }
             }, (err, stats)=> {
                 console.log("ERR", err)
+                console.log("ERRORS", stats?.toJson('minimal'))
                 //console.log("STATS", stats)
             })
 
