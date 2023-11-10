@@ -29,7 +29,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.18.0",
     "@babel/preset-react": "^7.17.12",
     "@klutch-card/klutch-js": "1.6.11-beta1",
-    "axios": "^0.27.2",
+    "axios": "^1.6.0",
     "babel-plugin-transform-async-to-promises": "^0.8.18",
     "babel-preset-minify": "^0.5.2",
     "chokidar": "^3.5.3",
