@@ -37,6 +37,7 @@ async function getRecipeIdFromName(projectName: string): Promise<string> {
         .option("e", {alias: "env", description: "environment", default: "sandbox", choices: ["sandbox", "production"]})
         .option("p", {alias: "port", describe: "Server Port", type: "number", default: 3000})
         .option("recipeId", {alias: "recipeId", describe: "Recipe Id", type: "string"})
+        
         .option("nopublish", {describe: "Prevent publishing prior to debug", type: "boolean", default: false}),
 
     handler:async  (params: any) => {
@@ -72,7 +73,7 @@ async function getRecipeIdFromName(projectName: string): Promise<string> {
 
         new DebugServer({port, distPath: buildPath}).start()
         const serverHost = host || internalIpV4Sync() 
-        const serverUrlOpts = env == "sandbox" ? "&env=sandbox" : ""        
+        const serverUrlOpts = env == "sandbox" ? "&env=sandbox" : "" 
         qrcode.generate(`klutch://klutch/miniapps/${recipeId}?debugRecipeId=${recipeId}&debugRecipeUrl=ws://${serverHost}:${port}${serverUrlOpts}`, {small: true})
     } 
 }

@@ -51,12 +51,13 @@ const PublishCommand = {
     command: "publish",
     describe: "Publish your miniapp to our sandbox environment",
     builder: (yargs: Argv)  => yargs
-        .option("k", {alias: "keyfile", type: "string"}),
+        .option("k", {alias: "keyfile", type: "string"})
+        .option("debugMode", {type: "string", default: false}),
 
     handler: async (params: any) => {        
         const manifest = Manifest(params.configFile)
 
-        let {keyfile} = params
+        let {keyfile, debugMode} = params
 
         const token = await KlutchRc.load(params.env)
 
@@ -70,7 +71,7 @@ const PublishCommand = {
 
         const {buildPath, templatesPath, screenshotsPath, iconFile} = manifest
 
-        await new TemplateBuilder({distPath: buildPath, templatePath: templatesPath}).transformAllTemplates()
+        await new TemplateBuilder({distPath: buildPath, templatePath: templatesPath, debugMode}).transformAllTemplates()
 
         const fileList:Array<String> = []
 
