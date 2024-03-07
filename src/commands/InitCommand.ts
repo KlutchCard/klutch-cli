@@ -74,18 +74,19 @@ const questions = [
 ]
 
 const filesToDownload = [
-    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/templates/Home.jsx",
-    filename: "templates/Home.jsx"},
-    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/templates/Main.jsx",
-    filename: "templates/Main.jsx"},
-    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/templates/Transaction.jsx",
-    filename: "templates/Transaction.jsx"},
-    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/images/icon.png",
-    filename: "images/icon.png"},
-    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/images/screenshots/screenshot1.png",
-    filename: "images/screenshots/screenshot1.png"},
-    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/.gitignore",
-    filename: ".gitignore"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/package.json", filename: "package.json"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/tsconfig.json", filename: "tsconfig.json"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/webpack.config.js", filename: "webpack.config.js"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/index.html", filename: "index.html"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/src/index.tsx", filename: "src/index.tsx"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/src/index.scss", filename: "src/index.scss"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/src/Main.tsx", filename: "src/Main.tsx"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/src/TransactionPanel.tsx", filename: "src/TransactionPanel.tsx"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/src/CardPanel.tsx", filename: "src/CardPanel.tsx"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/src/HomePanel.tsx", filename: "src/HomePanel.tsx"},    
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/images/icon.png", filename: "images/icon.png"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/images/screenshots/screenshot1.png", filename: "images/screenshots/screenshot1.png"},
+    {url: "https://raw.githubusercontent.com/KlutchCard/klutch-cli/main/assets/.gitignore", filename: ".gitignore"},
 ]
 
 
@@ -119,11 +120,11 @@ async function createFileStructure(answers: any) {
     const {projectName} = answers
 
     const newDir: string = await mkdir(`./${projectName}`, {recursive: true}) || `./${projectName}`
-    const templatesDir = await mkdir(`${newDir}/templates`, {recursive: true}) 
+    const templatesDir = await mkdir(`${newDir}/src`, {recursive: true}) 
     const imagesDir = await mkdir(`${newDir}/images/screenshots`, {recursive: true}) 
 
     const manifest = {
-        version: 1,
+        version: 2,
         visibility: "PUBLIC",
         iconFile: "./images/icon.png",
         screenshotsPath: "./images/screenshots",
