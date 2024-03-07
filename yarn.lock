@@ -358,10 +358,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@klutch-card/klutch-js@1.6.11-beta1":
-  version "1.6.11-beta1"
-  resolved "https://registry.yarnpkg.com/@klutch-card/klutch-js/-/klutch-js-1.6.11-beta1.tgz#708bd6acb017814e06120b2796c99f51591d0d4b"
-  integrity sha512-9txQYyRfWv2LR/UP04XjgXiUsS7+DZCtl0FrQ6i2EI1HIYo0x9W+QZCWWF9NpVHnZWYNcnbh6XsCUGeVWb7kRA==
+"@klutch-card/klutch-js@1.7.20":
+  version "1.7.20"
+  resolved "https://registry.yarnpkg.com/@klutch-card/klutch-js/-/klutch-js-1.7.20.tgz#aaa9a90697c5bf1102e7e9246f7e286a68df7df6"
+  integrity sha512-eUIKYdRncvsvhczxEyTjRM0e9UANwnyT5o5eHie24dtayMU+qgnpGCh3+WSEdqp77C7LAEvMjlqIxxtWkmepOw==
   dependencies:
     "@apollo/client" "^3.5.8"
     axios "^0.21.1"
@@ -370,6 +370,7 @@
     graphql "^15.3.0"
     graphql-tag "^2.12.0"
     rxjs "^6.6.2"
+    tslib "^2.4.0"
 
 "@types/babel__core@^7.1.19":
   version "7.1.19"
@@ -2707,6 +2708,11 @@ tslib@^2.1.0, tslib@^2.3.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
   integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
+
+tslib@^2.4.0:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.2.tgz#703ac29425e7b37cd6fd456e92404d46d1f3e4ae"
+  integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==
 
 type-fest@^1.0.2:
   version "1.4.0"

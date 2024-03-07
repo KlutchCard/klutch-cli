@@ -5,7 +5,7 @@ import "./index.scss";
 import { Main } from './Main';
 import { TransactionPanel } from './TransactionPanel';
 import { CardPanel } from './CardPanel';
-
+import { HomePanel } from './HomePanel';
 
 const container = document.getElementById('app')!;
 const root = createRoot(container);

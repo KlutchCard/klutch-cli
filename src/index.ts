@@ -32,7 +32,8 @@ function main() {
                 KlutchJS.configure({        
                     userPoolClientId: "12oebireo15skgf2r377oqjmus",
                     userPoolServer: "https://cognito-idp.us-west-2.amazonaws.com/",
-                    serverUrl: "https://sandbox.klutchcard.com/graphql"
+                   // serverUrl: "https://sandbox.klutchcard.com/graphql"
+                   serverUrl: "http://localhost:8080/graphql"
                 })
             } else {
                 KlutchJS.configure({        
@@ -42,14 +43,14 @@ function main() {
                 })
             }
         })
-        .command(DebugCommand)
+//        .command(DebugCommand)
         .command(InitCommand)
         .command(LoginCommand)
         .command(PublishCommand)
         .command(GenerateKeyCommand)   
         .command(TestUserCommand)     
         .command(WhoAmICommand)     
-        .command(BuildTemplatesCommand)
+//        .command(BuildTemplatesCommand)
         .options("c", {alias: "configFile", description: "Path to klutch.json", default: "./klutch.json"})
         .options("e", {alias: "env", description: "Environment", hidden: true})
         .demandCommand()

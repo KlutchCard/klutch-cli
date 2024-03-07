@@ -66,18 +66,12 @@ const PublishCommand = {
             if (!ret) return
         }
         
-        const { projectName, version } = manifest
-
-
-        const {buildPath, templatesPath, screenshotsPath, iconFile} = manifest
-
-        await new TemplateBuilder({distPath: buildPath, templatePath: templatesPath, debugMode}).transformAllTemplates()
+        
+        const { screenshotsPath, iconFile} = manifest
 
         const fileList:Array<String> = []
 
         fileList.push("/images/icon.png")
-        const templateFiles = await readdir(`${buildPath}/templates`)
-        templateFiles.forEach(e => fileList.push(`/templates/${e}`))
 
         const screenshotFiles = await readdir(`${screenshotsPath}`)
 
@@ -96,10 +90,7 @@ const PublishCommand = {
         const icon = filesToUpload.find((i: RecipeFile) => i.fileName == "/images/icon.png")
         icon && uploadFile(icon.url, manifest.iconFile)
 
-        //templates
-        filesToUpload.filter(i => i.fileName.startsWith("/templates")).forEach(f => {
-            uploadFile(f.url, `${buildPath}/${f.fileName}`)
-        })
+
 
         //screenshots
         filesToUpload.filter(i => i.fileName.startsWith("/images/screenshots")).forEach(f => {

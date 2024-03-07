@@ -117,18 +117,21 @@ function downloadFile(fileUrl: string, outputLocationPath: string) {
 
 async function createFileStructure(answers: any) {
 
-    const {projectName} = answers
+    let {projectName, serverUrl} = answers    
 
     const newDir: string = await mkdir(`./${projectName}`, {recursive: true}) || `./${projectName}`
     const templatesDir = await mkdir(`${newDir}/src`, {recursive: true}) 
     const imagesDir = await mkdir(`${newDir}/images/screenshots`, {recursive: true}) 
+
+    if (!serverUrl) {
+        serverUrl = "https://<<MY SERVER URL>>"
+    }
 
     const manifest = {
         version: 2,
         visibility: "PUBLIC",
         iconFile: "./images/icon.png",
         screenshotsPath: "./images/screenshots",
-        templatesPath: "./templates",
         buildPath: "./dist",
         publicKeyFile: `./${projectName}.pem`,
         minimumKlutchVersion: "1.0.0",        
@@ -140,6 +143,25 @@ async function createFileStructure(answers: any) {
                 "com.alloycard.core.entities.transaction.TransactionCreatedEvent"
             ]
         },
+        templates: [
+            {
+                name: "main",
+                url:  `${serverUrl}/main`,
+            },
+            {               
+                name: "home",
+                url:  `${serverUrl}/homePanel`,
+            },   
+            {
+                name: "transaction",
+                url:  `${serverUrl}/transactionPanel`,
+            },   
+            {
+                name: "card",
+                url:  `${serverUrl}/cardPanel`,
+                version: 1                
+            }
+        ],
         ...answers}
 
     await writeFile(`${newDir}/klutch.json`, JSON.stringify(manifest, null, 4))

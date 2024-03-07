@@ -15,26 +15,10 @@ npm i -g @klutch-card/klutch-cli
 
 After installing, the CLI is available using the `klutch` command.
 
-## Usage
-
-To launch your Klutch mini app in debug mode using the CLI run.
-
-```
-klutch debug <recipeId> Starts the Debug Server
-```
-
-*** Your recipe ID can be found in the `Details` page of your mini app at (dev.klutchcard.com/miniapps/)[]https://dev.klutchcard.com/miniapps/
-
-After running the command, you will receive a QR code.
-
-![QR Code Image](images/app-qr-code.png)
-
-Scan the QR code using the expo app to launch the Klutch app in sandbox mode with your dev mini app installed.
 
 ## Commands
 
 ```
-klutch debug                 //Starts the Debug Server
 klutch generateKey           //Generate Keys for the miniapp
 klutch init                  //Creates a blank miniapp template.
 klutch login                 //Logs you in as a developer
